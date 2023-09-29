@@ -1,0 +1,6 @@
+---
+  - name: Restart fluentbit.
+    service:
+      name: fluent-bit
+      state: restarted
+    listen: "restart fluentbit"

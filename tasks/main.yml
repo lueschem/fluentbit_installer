@@ -1,0 +1,49 @@
+---
+- name: Add fluentbit repository key.
+  ansible.builtin.copy:
+    src: fluentbit-keyring.gpg
+    dest: /usr/share/keyrings/
+    mode: 0644
+
+- name: Add fluentbit repository.
+  ansible.builtin.template:
+    src: fluentbit.list
+    dest: /etc/apt/sources.list.d/
+    mode: 0644
+
+- name: Update the apt cache.
+  ansible.builtin.apt:
+    update_cache: yes
+  changed_when: false
+
+- name: Install fluentbit.
+  ansible.builtin.apt:
+    name:
+      - fluent-bit
+    state: latest
+    install_recommends: no
+  notify: "restart fluentbit"
+
+- name: Add static fluentbit configuration.
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/fluent-bit/
+    mode: 0644
+  loop: "{{ lookup('fileglob', 'fluentbit_config/*', wantlist=True) }}"
+  notify: "restart fluentbit"
+
+- name: Monitor selected network interfaces.
+  ansible.builtin.template:
+    src: input_netif.conf
+    dest: /etc/fluent-bit/input_netif_{{ item }}.conf
+    mode: 0644
+  loop: "{{ ansible_interfaces | intersect(monitored_interfaces) }}"
+  notify: "restart fluentbit"
+  
+- name: Configure InfluxDB as output.
+  ansible.builtin.template:
+    src: output_influxdb.conf
+    dest: /etc/fluent-bit/
+    mode: 0644
+  notify: "restart fluentbit"
+

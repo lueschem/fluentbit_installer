@@ -1,0 +1,7 @@
+---
+monitored_interfaces:
+  - eth0
+  - eth1
+  - end0
+  - wwan0
+  - wlan0
