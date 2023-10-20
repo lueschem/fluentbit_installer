@@ -1,5 +1,7 @@
 ---
-influxdb_server: "UNDEFINED"
-influxdb_bucket: "UNDEFINED"
-influxdb_http_token: "UNDEFINED"
-influxdb_org: "UNDEFINED"
+monitored_interfaces:
+  - eth0
+  - eth1
+  - end0
+  - wwan0
+  - wlan0
