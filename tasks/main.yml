@@ -24,6 +24,11 @@
     install_recommends: no
   notify: "restart fluentbit"
 
+- name: Enable fluentbit.
+  ansible.builtin.service:
+    name: fluent-bit
+    enabled: yes
+
 - name: Add static fluentbit configuration.
   ansible.builtin.copy:
     src: "{{ item }}"
